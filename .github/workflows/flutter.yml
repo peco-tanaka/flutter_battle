@@ -1,0 +1,109 @@
+name: Flutter CI
+
+# ワークフローをトリガーするイベントを定義
+on:
+  push:
+    branches:
+      - main  # mainブランチへのpush時に実行
+  pull_request:
+
+# ワークフロー内のジョブを定義
+jobs:
+  # Androidビルド用のジョブ
+  build-android:
+    runs-on: ubuntu-latest
+
+    steps:
+      # リポジトリのコードをチェックアウト
+      - name: Checkout code
+        uses: actions/checkout@v5
+
+      # fvmのバージョンを取得
+      - name: "Read flutter version from fvm config"
+        run: |
+          FLUTTER_VERSION=$(jq -r '.flutterSdkVersion' ./.fvm/fvm_config.json)
+          echo "FLUTTER_VERSION=$FLUTTER_VERSION" >> $GITHUB_ENV
+        shell: bash
+
+      # Flutterのセットアップ
+      - name: "Setup Flutter"
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: ${{ env.FLUTTER_VERSION }}  # 取得したFlutterバージョンを使用
+          cache: true
+
+      # flutter cleanを実行してキャッシュを削除
+      - name: Clean Flutter build
+        run: flutter clean
+
+      # Flutterの依存関係をインストール
+      - name: Install dependencies
+        run: flutter pub get
+
+      # フォーマットチェックを追加
+      - name: Check code formatting
+        run: dart format --set-exit-if-changed .
+
+      # リントチェックを実行
+      - name: Run linter
+        run: flutter analyze
+
+      # テストを実行
+      - name: Run tests
+        run: flutter test
+
+      # Androidのビルド
+      - name: Build APK (Android)
+        run: flutter build apk --debug
+
+  # iOSビルド用のジョブ
+  build-ios:
+    runs-on: macos-latest
+
+    steps:
+      # リポジトリのコードをチェックアウト
+      - name: Checkout code
+        uses: actions/checkout@v5
+
+      # fvmのバージョンを取得
+      - name: "Read flutter version from fvm config"
+        run: |
+          FLUTTER_VERSION=$(jq -r '.flutterSdkVersion' ./.fvm/fvm_config.json)
+          echo "FLUTTER_VERSION=$FLUTTER_VERSION" >> $GITHUB_ENV
+        shell: bash
+
+      # Flutterのセットアップ
+      - name: "Setup Flutter"
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: ${{ env.FLUTTER_VERSION }}  # 取得したFlutterバージョンを使用
+          cache: true
+
+      # flutter cleanを実行してキャッシュを削除
+      - name: Clean Flutter build
+        run: flutter clean
+
+      # Flutterの依存関係をインストール
+      - name: Install dependencies
+        run: flutter pub get
+
+      # フォーマットチェックを追加
+      - name: Check code formatting
+        run: dart format --set-exit-if-changed .
+
+      # リントチェックを実行
+      - name: Run linter
+        run: flutter analyze
+
+      # テストを実行
+      - name: Run tests
+        run: flutter test
+
+      # iOS Simulatorの情報を表示
+      - name: List iOS Simulators
+        run: xcrun simctl list devices available
+
+      # iOSのビルド (署名なし)
+      - name: Build iOS (No Code Signing)
+        run: flutter build ios --release --no-codesign
+

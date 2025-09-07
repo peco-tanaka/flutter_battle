@@ -1,0 +1,20 @@
+flavors:
+  develop:
+    app:
+      name: "Flutter Settings Dev"
+
+    android:
+      applicationId: "com.example.flutter_settings.dev"
+
+    ios:
+      bundleId: "com.example.flutter_settings.dev"
+
+  production:
+    app:
+      name: "Flutter Settings"
+
+    android:
+      applicationId: "com.example.flutter_settings"
+
+    ios:
+      bundleId: "com.example.flutter_settings"

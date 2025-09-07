@@ -1,0 +1,12 @@
+pre-commit:
+  parallel: false
+  commands:
+    format:
+      run: dart format .
+      glob: "lib/**/*.dart"
+      stage_fixed: true
+      fail_text: "Flutter format failed. Please check your Dart code syntax."
+    analyze:
+      run: flutter analyze
+      glob: "lib/**/*.dart"
+      fail_text: "Flutter analyze found issues. Please fix the reported problems before committing."
