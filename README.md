@@ -1,21 +1,13 @@
-# flutter_settings
+# 概要
 
-## Formatter設定
+flutter を使用したシンプルなコマンドバトルゲーム。
+３すくみの関係を持つコマンドのじゃんけんを繰り返し、相手の HP を 0 にした方が勝利となる。
 
-### エディター設定
+## 要件
 
-- format code on save
+- Unity で開発する予定があるため、Flutter でも可能な限り似た設計にする
+- db にはローカル DB の isar を使用する
 
-## lefthookの導入
+## 設計
 
-### lefthookのインストール
-
-```bash
-brew install lefthook
-```
-
-### lefthookの初期化
-
-```bash
-leftfook install
-```
+- flutter 最新
